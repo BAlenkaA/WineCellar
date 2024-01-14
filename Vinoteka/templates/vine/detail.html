@@ -20,6 +20,16 @@
           </small>
         </h6>
         <p class="card-text">{{ vine.description|linebreaksbr }}</p>
+        {% if user == vine.author %}
+          <div class="mb-2">
+            <a class="btn btn-sm text-muted" href="{% url 'vine:edit_vine' vine.slug %}" role="button">
+              Отредактировать публикацию
+            </a>
+            <a class="btn btn-sm text-muted" href="{% url 'vine:delete_vine' vine.slug %}" role="button">
+              Удалить публикацию
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

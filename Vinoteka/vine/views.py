@@ -18,19 +18,25 @@ def index(request):
     return render(request, 'vine/index.html', context=context)
 
 
-def add_vine(request):
-    if request.method == 'POST':
-        form = VineForm(request.POST, request.FILES)
-        if form.is_valid():
-            vine = form.save(commit=False)
-            vine.author = request.user
-            vine.save()
-            return redirect('home')
+def add_vine(request, vine_slug=None):
+    if vine_slug is not None:
+        instance = get_object_or_404(Vine, slug=vine_slug)
     else:
-        form = VineForm
-    context = {
-        'form': form
-    }
+        instance = None
+    form = VineForm(request.POST or None, instance=instance)
+    context = {'form': form}
+    if form.is_valid():
+        form.save()
+    return render(request, 'vine/create.html', context=context)
+
+
+def delete_vine(request, vine_slug):
+    instance = get_object_or_404(Vine, slug=vine_slug)
+    form = VineForm(instance=instance)
+    context = {'form': form}
+    if request.method == 'POST':
+        instance.delete()
+        return redirect('vine:index')
     return render(request, 'vine/create.html', context=context)
 
 
