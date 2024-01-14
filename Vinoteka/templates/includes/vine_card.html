@@ -1,0 +1,22 @@
+<div class="col d-flex justify-content-center">
+  <div class="card" style="width: 40rem;">
+    <div class="card-body">
+      {% if v.image %}
+        <a href="{{ v.image.url }}" target="_blank">
+          <img class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block" src="{{ v.image.url }}">
+        </a>
+      {% endif %}
+      <h5 class="card-title">{{ v.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        <small>
+          Категория: {{ v.category.name }} | Добавлено: {{ v.date_create|date:"d E Y, H:i" }}<br>
+          Год розлива: {{ v.year }}  | Завод: {{ v.factory }}<br>
+          Сорт винограда: {{ v.variety.name }} | {{ v.sweetness.name }} | {{ v.colors.name }}<br>
+          {% if v.tasty %}Винный напиток хорош, надо брать!{% endif %}
+        </small>
+      </h6>
+      <p class="card-text">{{ v.description|truncatewords:10 }}</p>
+      <a href="{{ v.get_absolute_url }}">Читать описание</a>
+    </div>
+  </div>
+</div>

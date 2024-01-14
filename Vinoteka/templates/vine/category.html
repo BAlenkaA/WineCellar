@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ category.name }}
+{% endblock %}
+{% block content %}
+  <h2 class="text-center">Напитки в категории - {{ category.name }}</h2>
+  <br>
+  <p>{{ category.description|linebreaksbr }}</p>
+  <br>
+  {% for v in vines %}
+    <article class="mb-5">
+      {% include "includes/vine_card.html" %}
+    </article>
+  {% empty %}
+    <p>В этой категории пока нет напитков.</p>
+  {% endfor %}
+  {% include "includes/paginator.html" %}
+{% endblock %}

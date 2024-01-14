@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ title }}
+{% endblock %}
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="card" style="width: 40rem;">
+      <div class="card-body">
+        {% if vine.image %}
+          <a href="{{ vine.image.url }}" target="_blank">
+            <img class="border-3 rounded img-fluid img-thumbnail mb-2 mx-auto d-block" src="{{ vine.image.url }}">
+          </a>
+        {% endif %}
+        <h5 class="card-title">{{ vine.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+          {{ vine.category.name }} из винограда {{ vine.variety.name }}<br>
+          <small>
+            {{ vine.sweetness.name }}, {{ vine.colors.name }}, {{ vine.year }}<br>
+            Завод {{ vine.factory}}
+          </small>
+        </h6>
+        <p class="card-text">{{ vine.description|linebreaksbr }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="col d-flex justify-content-center">
+    {% if vine.tasty %}
+      <h5>Вкусно, однозначно стоит брать!</h5>
+    {% endif %}
+  </div>
+{% endblock %}
