@@ -20,8 +20,8 @@
         </div>
         <div class="card-body">
           <form method="post"
-            {% if '/edit_comment/' in request.path %}
-              action="{% url 'vine:edit_comment' comment.vine_id comment.id %}"
+            {% if '/edit_comment/' in request.path and vine.id and comment.id %}
+              action="{% url 'vine:edit_comment' vine.id comment.id %}"
             {% endif %}>
             {% csrf_token %}
             {% if not '/delete_comment/' in request.path %}

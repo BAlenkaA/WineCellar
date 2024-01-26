@@ -5,61 +5,41 @@ from vine.models import Color, Vine, Category, Sweetness, Variety
 admin.site.empty_value_display = 'Не задано'
 
 
-class VineInline(admin.StackedInline):
-    model = Vine
-    extra = 0
-
-
-class CategoryAdmin(admin.ModelAdmin):
-    inlines = (
-        VineInline,
-    )
-    list_display = (
-        'name',
-        'description',
-    )
-    search_fields = ('name',)
-    prepopulated_fields = {'slug': ('name',)}
-
-
-class SweetnessAdmin(admin.ModelAdmin):
-    inlines = (
-        VineInline,
-    )
-
-
-class ColorAdmin(admin.ModelAdmin):
-    inlines = (
-        VineInline,
-    )
-
-
-class VarietyAdmin(admin.ModelAdmin):
-    inlines = (
-        VineInline,
-    )
-
-
+@admin.register(Vine)
 class VineAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'category',
         'colors',
-        'variety',
         'sweetness',
-        'year',
+        'varieties_display',
         'factory',
-        'image',
-        'tasty'
+        'year',
+        'tasty',
+        'tasting',
     )
-    search_fields = ('title',)
-    list_filter = ('tasty', 'date_create')
-    prepopulated_fields = {'slug': ('title',)}
+    search_fields = (
+        'title',
+        'category',
+        'colors',
+        'sweetness',
+        'factory',
+    )
+    list_filter = (
+        'category',
+        'colors',
+        'sweetness',
+        'factory',
+        'year',
+        'tasty',
+        'tasting',
+    )
+
+    def varieties_display(self, obj):
+        return ', '.join(variety.name for variety in obj.variety.all())
+    varieties_display.short_description = 'Сорта винограда'
 
 
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Sweetness, SweetnessAdmin)
-admin.site.register(Color, ColorAdmin)
-admin.site.register(Variety, VarietyAdmin)
-admin.site.register(Vine, VineAdmin)
-admin.site.empty_value_display = 'Не задано'
+@admin.register(Category, Color, Sweetness, Variety)
+class SimpleModelAdmin(admin.ModelAdmin):
+    list_display = ('name',)

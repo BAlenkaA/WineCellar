@@ -27,7 +27,6 @@
             {% else %}
             <li style="text-indent: 20px;"><a href="{% url 'vine:index' %}">Все категории</a></li>
             {% endif %}
-
             {% for c in categories %}
               {% if c.pk == cat_selected %}
                 <li class="selected" style="text-indent: 20px;">{{ c.name }}</li>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-  {{ title }}
+  {{ object.title }}
 {% endblock %}
 {% block content %}
   <div class="col d-flex justify-content-center">
@@ -13,7 +13,11 @@
         {% endif %}
         <h5 class="card-title">{{ vine.title }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">
-          {{ vine.category.name }} из винограда {{ vine.variety.name }}<br>
+          {{ vine.category.name }} из винограда
+          {% for varietal in vine.variety.all %}
+            {{ varietal.name }}
+              {% if not forloop.last %}, {% endif %}
+          {% endfor %}<br>
           <small>
             {{ vine.sweetness.name }}, {{ vine.colors.name }}, {{ vine.year }}<br>
             Завод {{ vine.factory}}
@@ -22,20 +26,21 @@
         <p class="card-text">{{ vine.description|linebreaksbr }}</p>
         {% if user == vine.author %}
           <div class="mb-2">
-            <a class="btn btn-sm text-muted" href="{% url 'vine:edit_vine' vine.slug %}" role="button">
+            <a class="btn btn-sm text-muted" href="{% url 'vine:edit_vine' vine.id %}" role="button">
               Отредактировать публикацию
             </a>
-            <a class="btn btn-sm text-muted" href="{% url 'vine:delete_vine' vine.slug %}" role="button">
+            <a class="btn btn-sm text-muted" href="{% url 'vine:delete_vine' vine.id %}" role="button">
               Удалить публикацию
             </a>
           </div>
         {% endif %}
+        {% include "includes/comments.html" %}
       </div>
     </div>
   </div>
   <br>
   <div class="col d-flex justify-content-center">
-    {% if vine.tasty %}
+    {% if object.tasty %}
       <h5>Вкусно, однозначно стоит брать!</h5>
     {% endif %}
   </div>

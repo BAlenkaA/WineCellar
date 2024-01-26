@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}
+  Что-то новенькое
+{% endblock %}
+{% block content %}
+  <h2 class="text-center">Когда хочется чего-то новенького</h2>
+  <br>
+  {% for v in object_list %}
+      <li>{{ v.title }} ({{ v.description }})</li>
+  {% endfor %}
+  {% include "includes/paginator.html" %}
+{% endblock %}
