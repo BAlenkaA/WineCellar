@@ -34,7 +34,7 @@
                 </a>
               {% endif %}
               <p>{{ form.instance.time_update|date:"d E Y" }} | {{ form.instance.year }} | {{ form.instance.factory}}<br>
-              <p>{{ form.instance.variety}} | {{ form.instance.sweetness }} | {{ form.instance.color }}<br>
+              <p>{% if form.instance.variety.exists %}{{ form.instance.variety.first.name}}{% endif %} | {{ form.instance.sweetness }} | {{ form.instance.colors }}<br>
               <h3>{{ form.instance.title }}</h3>
               <p>{{ form.instance.description|linebreaksbr }}</p>
             </article>

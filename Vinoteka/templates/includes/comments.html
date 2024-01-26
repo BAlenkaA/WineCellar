@@ -1,7 +1,7 @@
 {% if user.is_authenticated %}
   {% load django_bootstrap5 %}
   <h5 class="mb-4">Оставить комментарий</h5>
-  <form method="post" action="{% url 'vine:create_comment' vine.slug %}">
+  <form method="post" action="{% url 'vine:create_comment' vine.id %}">
     {% csrf_token %}
     {% bootstrap_form form %}
     {% bootstrap_button button_type="submit" content="Отправить" %}
@@ -19,10 +19,10 @@
       {{ comment.text|linebreaksbr }}
     </div>
     {% if user == comment.author %}
-      <a class="btn btn-sm text-muted" href="{% url 'vine:edit_comment' vine.slug comment.id %}" role="button">
+      <a class="btn btn-sm text-muted" href="{% url 'vine:edit_comment' vine.id comment.id %}" role="button">
         Отредактировать комментарий
       </a>
-      <a class="btn btn-sm text-muted" href="{% url 'vine:delete_comment' vine.slug comment.id %}" role="button">
+      <a class="btn btn-sm text-muted" href="{% url 'vine:delete_comment' vine.id comment.id %}" role="button">
         Удалить комментарий
       </a>
     {% endif %}

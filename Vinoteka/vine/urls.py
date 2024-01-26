@@ -1,17 +1,27 @@
 from django.urls import path
 
-from .views import index, add_vine, show_vine, show_category, delete_vine, add_comment, delete_comment
+from .views import (
+    VineList,
+    VineCategory,
+    VineDetail,
+    AddVine,
+    UpdateVine,
+    DeleteVine,
+    AddComment,
+    UpdateComment,
+    DelComment
+)
 
 app_name = 'vine'
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('categories/<slug:cat_slug>/', show_category, name='categories'),
-    path('add_vine/', add_vine, name='create_vine'),
-    path('<slug:vine_slug>/', show_vine, name='show_vine'),
-    path('<slug:vine_slug>/edit/', add_vine, name='edit_vine'),
-    path('<slug:vine_slug>/delete/', delete_vine, name='delete_vine'),
-    path('<slug:vine_slug>/comment/', add_comment, name='create_comment'),
-    path('<slug:vine_slug>/edit_comment/<int:comment_id>/', add_comment, name='edit_comment'),
-    path('<slug:vine_slug>/delete_comment/<int:comment_id>/', delete_comment, name='delete_comment'),
+    path('', VineList.as_view(), name='index'),
+    path('categories/<slug:cat_slug>/', VineCategory.as_view(), name='categories'),
+    path('add_vine/', AddVine.as_view(), name='create_vine'),
+    path('<int:vine_id>/', VineDetail.as_view(), name='show_vine'),
+    path('<int:vine_id>/edit/', UpdateVine.as_view(), name='edit_vine'),
+    path('<int:vine_id>/delete/', DeleteVine.as_view(), name='delete_vine'),
+    path('<int:vine_id>/comment/', AddComment.as_view(), name='create_comment'),
+    path('<int:vine_id>/edit_comment/<int:comment_id>/', UpdateComment.as_view(), name='edit_comment'),
+    path('<int:vine_id>/delete_comment/<int:comment_id>/', DelComment.as_view(), name='delete_comment'),
 ]

@@ -10,12 +10,14 @@ User = get_user_model()
 class Variety(models.Model):
     name = models.CharField(
         max_length=settings.MAX_TITLE_LENGTH,
+        unique=True,
         verbose_name='Сорт'
     )
 
     class Meta:
         verbose_name = 'сорт винограда'
         verbose_name_plural = 'Сорта винограда'
+        ordering = ['name']
 
     def __str__(self):
         return self.name[:settings.MAX_TITLE_LENGTH]
@@ -77,43 +79,36 @@ class Vine(models.Model):
         max_length=settings.MAX_TITLE_LENGTH,
         verbose_name='Наименование вина'
     )
-    slug = models.SlugField(
-        max_length=settings.MAX_TEXT_LENGTH,
-        unique=True,
-        verbose_name='URL',
-        help_text='Разрешены символы латиницы, цифры, дефис и подчёркивание'
-    )
     category = models.ForeignKey(
         Category,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
         verbose_name='Категория',
         related_name='vine_cat'
     )
     colors = models.ForeignKey(
         Color,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
+        blank=True,
         verbose_name='Цвет',
         related_name='vine_col'
     )
     sweetness = models.ForeignKey(
         Sweetness,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
+        blank=True,
         verbose_name='Сладость',
         related_name='vine_sweet'
     )
-    variety = models.ForeignKey(
+    variety = models.ManyToManyField(
         Variety,
-        on_delete=models.SET_NULL,
-        null=True,
+        blank=True,
         verbose_name='Сорт винограда',
         related_name='vine_var'
     )
-    factory = models.CharField(max_length=settings.MAX_TITLE_LENGTH, verbose_name='Завод изготовителя')
+    factory = models.CharField(max_length=settings.MAX_TITLE_LENGTH, blank=True, verbose_name='Завод изготовителя')
     year = models.PositiveIntegerField(
-        verbose_name='Год',
+        null=True,
+        verbose_name='Год урожая',
         validators=[
             MinValueValidator(1000, message='Введите год от 1000'),
             MaxValueValidator(3000, message='Введите год одо 3000')
@@ -136,6 +131,11 @@ class Vine(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Дегустатор'
     )
+    tasting = models.BooleanField(
+        default=True,
+        verbose_name='Продегустировано',
+        help_text='Если вино уже продегустировано, ставь галочку.'
+    )
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     time_update = models.DateTimeField(auto_now=True)
 
@@ -148,7 +148,7 @@ class Vine(models.Model):
         return self.title[:settings.MAX_TEXT_LENGTH]
 
     def get_absolute_url(self):
-        return reverse('vine:show_vine', kwargs={'vine_slug': self.slug})
+        return reverse('vine:show_vine', kwargs={'vine_id': self.pk})
 
 
 class Comment(models.Model):

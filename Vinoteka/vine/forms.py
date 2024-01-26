@@ -1,17 +1,29 @@
 from django import forms
 from datetime import datetime
 
-from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
 
-from .models import Comment, Vine
+from .models import Comment, Vine, User
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('username', 'email')
 
 
 class VineForm(forms.ModelForm):
+    year = forms.IntegerField(
+        label='Год',
+        required=False,
+        widget=forms.NumberInput(attrs={'min': 1000, 'max': datetime.now().year})
+    )
+
     class Meta:
         model = Vine
         fields = (
             'title',
-            'slug',
             'category',
             'colors',
             'sweetness',
@@ -20,15 +32,9 @@ class VineForm(forms.ModelForm):
             'factory',
             'image',
             'description',
-            'tasty'
+            'tasty',
+            'tasting'
         )
-
-    def clean_year(self):
-        year = self.cleaned_data['year']
-        current_year = datetime.now().year
-        if year > current_year:
-            raise ValidationError('Год производства вина не может быть больше текущего')
-        return year
 
 
 class CommentForm(forms.ModelForm):
