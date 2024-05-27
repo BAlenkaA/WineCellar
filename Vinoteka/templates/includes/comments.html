@@ -18,7 +18,7 @@
       <br>
       {{ comment.text|linebreaksbr }}
     </div>
-    {% if user == comment.author %}
+    {% if user.is_superuser or user == comment.author %}
       <a class="btn btn-sm text-muted" href="{% url 'vine:edit_comment' vine.id comment.id %}" role="button">
         Отредактировать комментарий
       </a>

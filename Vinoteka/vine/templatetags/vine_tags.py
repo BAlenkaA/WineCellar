@@ -1,4 +1,5 @@
 from django import template
+
 from vine.models import Category
 
 register = template.Library()

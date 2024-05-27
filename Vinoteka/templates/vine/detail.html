@@ -24,13 +24,13 @@
           </small>
         </h6>
         <p class="card-text">{{ vine.description|linebreaksbr }}</p>
-        {% if user == vine.author %}
+        {% if user.is_superuser %}
           <div class="mb-2">
             <a class="btn btn-sm text-muted" href="{% url 'vine:edit_vine' vine.id %}" role="button">
-              Отредактировать публикацию
+              Отредактировать напиток
             </a>
             <a class="btn btn-sm text-muted" href="{% url 'vine:delete_vine' vine.id %}" role="button">
-              Удалить публикацию
+              Удалить напиток
             </a>
           </div>
         {% endif %}

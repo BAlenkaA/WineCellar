@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 
@@ -71,7 +71,7 @@ class Category(models.Model):
         return self.name[:settings.MAX_TEXT_LENGTH]
 
     def get_absolute_url(self):
-        return reverse('categories', kwargs={'slug:cat_slug': self.slug})
+        return reverse('categories', kwargs={'cat_slug': self.slug})
 
 
 class Vine(models.Model):
@@ -105,7 +105,11 @@ class Vine(models.Model):
         verbose_name='Сорт винограда',
         related_name='vine_var'
     )
-    factory = models.CharField(max_length=settings.MAX_TITLE_LENGTH, blank=True, verbose_name='Завод изготовителя')
+    factory = models.CharField(
+        max_length=settings.MAX_TITLE_LENGTH,
+        blank=True,
+        verbose_name='Завод изготовителя'
+    )
     year = models.PositiveIntegerField(
         null=True,
         verbose_name='Год урожая',
@@ -126,17 +130,13 @@ class Vine(models.Model):
         verbose_name='Вкусно!',
         help_text='Не забудь поставить галочку, если напиток тебе понравился.'
     )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Дегустатор'
-    )
     tasting = models.BooleanField(
         default=True,
         verbose_name='Продегустировано',
         help_text='Если вино уже продегустировано, ставь галочку.'
     )
-    date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    date_create = models.DateTimeField(
+        auto_now_add=True, verbose_name='Дата создания')
     time_update = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -160,3 +160,6 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments',
     )
+
+    class Meta:
+        ordering = ('created_at',)

@@ -1,11 +1,11 @@
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include, reverse_lazy
+from django.urls import include, path, reverse_lazy
 from django.views.generic import CreateView
 
-from Vinoteka import settings
 from pages.views import HomepageList, NotHavenTastedList
 from vine.forms import CustomUserCreationForm
+from Vinoteka import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('', HomepageList.as_view(), name='home'),
     path('new/', NotHavenTastedList.as_view(), name='new'),
     path('vine/', include('vine.urls')),
+    path('api/', include('api.urls')),
     path('auth/registration/',
         CreateView.as_view(
             template_name='registration/registration_form.html',

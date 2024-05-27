@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from vine.models import Color, Vine, Category, Sweetness, Variety
+from vine.models import Category, Color, Sweetness, Variety, Vine
 
 admin.site.empty_value_display = 'Не задано'
 
