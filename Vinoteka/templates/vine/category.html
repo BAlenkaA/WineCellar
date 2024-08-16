@@ -7,7 +7,7 @@
   <br>
   <p>{{ category.description|linebreaksbr }}</p>
   <br>
-  {% for v in vines %}
+  {% for v in object_list %}
     <article class="mb-5">
       {% include "includes/vine_card.html" %}
     </article>

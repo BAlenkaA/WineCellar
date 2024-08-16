@@ -1,7 +1,7 @@
 {% if user.is_authenticated %}
   {% load django_bootstrap5 %}
   <h5 class="mb-4">Оставить комментарий</h5>
-  <form method="post" action="{% url 'add_comment' vine.id %}">
+  <form method="post" action="{% url 'vine:create_comment' vine.id %}">
     {% csrf_token %}
     {% bootstrap_form form %}
     {% bootstrap_button button_type="submit" content="Отправить" %}
@@ -12,19 +12,17 @@
   <div class="media mb-4">
     <div class="media-body">
       <h5 class="mt-0">
-        <a href="{% url 'index' comment.author.username %}" name="comment_{{ comment.id }}">
-          @{{ comment.author.username }}
-        </a>
+        @{{ comment.author.username }}
       </h5>
       <small class="text-muted">{{ comment.created_at }}</small>
       <br>
       {{ comment.text|linebreaksbr }}
     </div>
-    {% if user == comment.author %}
-      <a class="btn btn-sm text-muted" href="{% url 'edit_comment' vine.id comment.id %}" role="button">
+    {% if user.is_superuser or user == comment.author %}
+      <a class="btn btn-sm text-muted" href="{% url 'vine:edit_comment' vine.id comment.id %}" role="button">
         Отредактировать комментарий
       </a>
-      <a class="btn btn-sm text-muted" href="{% url 'delete_comment' vine.id comment.id %}" role="button">
+      <a class="btn btn-sm text-muted" href="{% url 'vine:delete_comment' vine.id comment.id %}" role="button">
         Удалить комментарий
       </a>
     {% endif %}

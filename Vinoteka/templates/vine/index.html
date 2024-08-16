@@ -5,9 +5,17 @@
 {% block content %}
 <h2 class="text-center">Полка с винными напитками</h2>
 <br>
-  {% for v in vines %}
-    <article class="mb-5">
-      {% include "includes/vine_card.html" %}
-    </article>
-  {% endfor %}
+  <div class="row">
+    {% for v in object_list %}
+      <div class="col-md-4 mb-5">
+        <article>
+          {% include "includes/vine_card.html" %}
+        </article>
+      </div>
+      {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div><div class="row">
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% include "includes/paginator.html" %}
 {% endblock %}

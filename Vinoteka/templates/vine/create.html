@@ -28,15 +28,15 @@
             {% bootstrap_form form %}
           {% else %}
             <article>
-              {% if form.instance.image %}
-                <a href="{{ form.instance.image.url }}" target="_blank">
-                  <img class="border-3 rounded img-fluid img-thumbnail mb-2" src="{{ form.instance.image.url }}">
+              {% if vine.image %}
+                <a href="{{ vine.image.url }}" target="_blank">
+                  <img class="border-3 rounded img-fluid img-thumbnail mb-2" src="{{ vine.image.url }}">
                 </a>
               {% endif %}
-              <p>{{ form.instance.time_update|date:"d E Y" }} | {{ form.instance.year }} | {{ form.instance.factory}}<br>
-              <p>{{ form.instance.variety}} | {{ form.instance.sweetness }} | {{ form.instance.color }}<br>
-              <h3>{{ form.instance.title }}</h3>
-              <p>{{ form.instance.description|linebreaksbr }}</p>
+              <p>{{ vine.time_update|date:"d E Y" }} | {{ vine.year }} | {{ vine.factory}}<br>
+              <p>{{ vine.sweetness }} | {{ vine.colors }}<br>
+              <h3>{{ vine.title }}</h3>
+              <p>{{ vine.description|linebreaksbr }}</p>
             </article>
           {% endif %}
           {% bootstrap_button button_type="submit" content="Отправить" %}

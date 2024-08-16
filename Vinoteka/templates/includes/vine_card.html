@@ -11,8 +11,8 @@
         <small>
           Категория: {{ v.category.name }} | Добавлено: {{ v.date_create|date:"d E Y, H:i" }}<br>
           Год розлива: {{ v.year }}  | Завод: {{ v.factory }}<br>
-          Сорт винограда: {{ v.variety.name }} | {{ v.sweetness.name }} | {{ v.colors.name }}<br>
-          {% if v.tasty %}Винный напиток хорош, надо брать!{% endif %}
+          Сорт винограда: {% if v.variety.exists %}{{ v.variety.first.name }}{% endif %} | {{ v.sweetness.name }} | {{ v.colors.name }}<br>
+          <b>{% if v.tasty %}Вкусненько, можно брать!{% endif %}</b>
         </small>
       </h6>
       <p class="card-text">{{ v.description|truncatewords:10 }}</p>

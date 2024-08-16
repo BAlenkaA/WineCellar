@@ -1,61 +1,98 @@
-from django.http import HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 
-from vine.forms import VineForm
-from vine.models import Vine, Category
-
-
-def pageNotFound(request, exception):
-    return HttpResponseNotFound('<h1>Страница не найдена</h1>')
-
-
-def index(request):
-    vines = Vine.objects.all()
-    context = {
-        'vines': vines,
-        'cat_selected': 0
-    }
-    return render(request, 'vine/index.html', context=context)
+from vine.forms import CommentForm, VineForm
+from vine.mixins import (AuthorOrSuperUserRequiredMixin, BaseCommentmixin,
+                         BaseVineMixin, SuperUserRequiredMixin)
+from vine.models import Category, Comment, Vine
+from Vinoteka import settings
 
 
-def add_vine(request, vine_slug=None):
-    if vine_slug is not None:
-        instance = get_object_or_404(Vine, slug=vine_slug)
-    else:
-        instance = None
-    form = VineForm(request.POST or None, instance=instance)
-    context = {'form': form}
-    if form.is_valid():
-        form.save()
-    return render(request, 'vine/create.html', context=context)
+class VineList(BaseVineMixin, ListView):
+    template_name = 'vine/index.html'
+    paginate_by = settings.VINE_COUNT_ON_INDEX_PAGE
+
+    def get_queryset(self):
+        return Vine.objects.filter(tasting=True).prefetch_related(
+            'variety').select_related(
+            'category',
+            'colors',
+            'sweetness'
+        )
 
 
-def delete_vine(request, vine_slug):
-    instance = get_object_or_404(Vine, slug=vine_slug)
-    form = VineForm(instance=instance)
-    context = {'form': form}
-    if request.method == 'POST':
-        instance.delete()
-        return redirect('vine:index')
-    return render(request, 'vine/create.html', context=context)
+class AddVine(SuperUserRequiredMixin, BaseVineMixin, CreateView):
+    form_class = VineForm
+    template_name = 'vine/create.html'
 
 
-def show_vine(request, vine_slug):
-    vine = get_object_or_404(Vine, slug=vine_slug)
-    context = {
-        'vine': vine,
-        'title': vine.title,
-        'cat_selected': vine.category_id
-    }
-    return render(request, 'vine/detail.html', context=context)
+class UpdateVine(SuperUserRequiredMixin, BaseVineMixin, UpdateView):
+    form_class = VineForm
+    pk_url_kwarg = 'vine_id'
+    template_name = 'vine/create.html'
 
 
-def show_category(request, cat_slug):
-    category = Category.objects.get(slug=cat_slug)
-    vines = Vine.objects.filter(category=category)
-    context = {
-        'vines': vines,
-        'category': category,
-        'cat_selected': category.id
-    }
-    return render(request, 'vine/category.html', context=context)
+class DeleteVine(SuperUserRequiredMixin, BaseVineMixin, DeleteView):
+    pk_url_kwarg = 'vine_id'
+    success_url = reverse_lazy('vine:index')
+    template_name = 'vine/create.html'
+
+
+class VineDetail(DetailView):
+    model = Vine
+    template_name = 'vine/detail.html'
+    pk_url_kwarg = 'vine_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vine = context['vine']
+        context['comments'] = Comment.objects.filter(vine=vine)
+        if self.request.user.is_authenticated:
+            context['form'] = CommentForm()
+        else:
+            context['form'] = None
+        context['cat_selected'] = context['object'].category_id
+        return context
+
+
+class VineCategory(ListView):
+    model = Vine
+    template_name = 'vine/category.html'
+    paginate_by = 5
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = Category.objects.get(slug=self.kwargs['cat_slug'])
+        context['category'] = category
+        context['cat_selected'] = category.id
+        return context
+
+    def get_queryset(self):
+        return Vine.objects.filter(category__slug=self.kwargs['cat_slug'],
+                                   tasting=True).prefetch_related(
+            'variety').select_related('category', 'colors', 'sweetness')
+
+
+class AddComment(LoginRequiredMixin, BaseCommentmixin, CreateView):
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        vine_id = self.kwargs['vine_id']
+        vine = get_object_or_404(Vine, pk=vine_id)
+        form.instance.vine_id = vine.id
+        return super().form_valid(form)
+
+
+class UpdateComment(AuthorOrSuperUserRequiredMixin,
+                    BaseCommentmixin, UpdateView):
+    form_class = CommentForm
+    pk_url_kwarg = 'comment_id'
+
+
+class DelComment(AuthorOrSuperUserRequiredMixin,
+                 BaseCommentmixin, DeleteView):
+    pk_url_kwarg = 'comment_id'
