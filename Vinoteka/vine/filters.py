@@ -14,4 +14,4 @@ class VineFilter(django_filters.FilterSet):
 
     class Meta:
         model = Vine
-        fields = ['title', 'variety', 'category', 'colors', 'sweetness', 'factory', 'tasty']
+        fields = ['category', 'title', 'colors', 'sweetness', 'factory', 'tasty', 'variety']

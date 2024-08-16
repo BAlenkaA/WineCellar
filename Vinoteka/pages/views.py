@@ -8,12 +8,14 @@ from vine.models import Vine
 class HomepageList(ListView):
     model = Vine
     template_name = 'pages/tasty_list.html'
-    paginate_by = 5
+    paginate_by = 6
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        filtered_qs = self.get_queryset()
         context['cat_selected'] = 0
         context['filter'] = VineFilter(self.request.GET, queryset=self.get_queryset())
+        context['no_results'] = not filtered_qs.exists()
         return context
 
     def get_queryset(self):
